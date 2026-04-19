@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task 3 Advanced</title>
+
+    <style>
+        body {
+            margin: 0;
+            font-family: Segoe UI;
+            background: linear-gradient(135deg, #f5e6d3 0%, #fef0e0 50%, #f5e6d3 100%);
+        }
+
+        /* HEADER (same style) */
+        header {
+            background: #2d8659;
+            color: #fff;
+            padding: 18px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        nav a {
+            color: #fff;
+            margin-left: 20px;
+            text-decoration: none;
+        }
+
+        /* SECTION */
+        section {
+            padding: 60px 20px;
+            text-align: center;
+        }
+
+        /* CAROUSEL FULL WIDTH */
+        .slider {
+            position: relative;
+            width: 100%;
+            height: 70vh;
+            overflow: hidden;
+        }
+
+        .slide {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            transition: opacity 1s ease-in-out;
+        }
+
+        .slide.active {
+            opacity: 1;
+        }
+
+        .slide img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* API CARD */
+        .api-box {
+            max-width: 500px;
+            margin: auto;
+            background: #fff;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, .1);
+            transition: 0.3s;
+        }
+
+        .api-box:hover {
+            transform: translateY(-5px);
+        }
+
+        .api-box p {
+            font-size: 18px;
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        button {
+            padding: 10px 15px;
+            border: none;
+            border-radius: 6px;
+            background: #2d8659;
+            color: #fff;
+            cursor: pointer;
+        }
+
+        button:hover {
+            opacity: 0.8;
+        }
+
+        /* FOOTER */
+        footer {
+            background: #1b5e3f;
+            color: #fff;
+            text-align: center;
+            padding: 20px;
+        }
+
+        /* MOBILE */
+        @media(max-width:600px) {
+            .slider {
+                height: 40vh;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- HEADER -->
+    <header>
+        <h3>Himanshu Pratap</h3>
+        <nav>
+            <a href="#">Home</a>
+            <a href="#">Carousel</a>
+            <a href="#">API</a>
+        </nav>
+    </header>
+
+    <!-- CAROUSEL -->
+    <section>
+        <h2>Image Carousel</h2>
+
+        <div class="slider">
+            <div class="slide active">
+                <img src="https://picsum.photos/id/1015/1200/600">
+            </div>
+            <div class="slide">
+                <img src="https://picsum.photos/id/1016/1200/600">
+            </div>
+            <div class="slide">
+                <img src="https://picsum.photos/id/1018/1200/600">
+            </div>
+        </div>
+
+    </section>
+
+    <!-- API -->
+    <section>
+        <h2>Joke Generator</h2>
+
+        <div class="api-box">
+            <p id="joke">Click button to generate a joke</p>
+            <button onclick="getJoke()">Get Joke</button>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer>
+        © 2026 Himanshu | ApexPlanet Task 3
+    </footer>
+
+    <script>
+        /* AUTO CAROUSEL */
+        let slides = document.querySelectorAll(".slide");
+        let index = 0;
+
+        function showSlide(i) {
+            slides.forEach(s => s.classList.remove("active"));
+            slides[i].classList.add("active");
+        }
+
+        function autoSlide() {
+            index = (index + 1) % slides.length;
+            showSlide(index);
+        }
+
+        setInterval(autoSlide, 3000); // auto move every 3 sec
+
+        /* API */
+        async function getJoke() {
+            let res = await fetch("https://official-joke-api.appspot.com/random_joke");
+            let data = await res.json();
+            document.getElementById("joke").innerText =
+                data.setup + " Haa " + data.punchline;
+        }
+    </script>
+
+</body>
+
+</html>
