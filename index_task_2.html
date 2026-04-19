@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task 2 — Himanshu</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box
+        }
+
+        body {
+            font-family: Segoe UI;
+            background: #f5e6d3;
+            color: #333
+        }
+
+        /* Header */
+        header {
+            background: #2d8659;
+            color: #fff;
+            padding: 18px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center
+        }
+
+        nav a {
+            color: #fff;
+            margin-left: 20px;
+            text-decoration: none
+        }
+
+        /* Section */
+        section {
+            padding: 60px 20px;
+            text-align: center
+        }
+
+        h2 {
+            color: #1b5e3f;
+            margin-bottom: 25px
+        }
+
+        /* TODO */
+        .todo-box {
+            max-width: 650px;
+            margin: auto;
+            background: #fff;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, .1)
+        }
+
+        .todo-input {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px
+        }
+
+        .todo-input input,
+        .todo-input select {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 6px
+        }
+
+        button {
+            cursor: pointer;
+            border: none;
+            padding: 10px 14px;
+            border-radius: 6px;
+            transition: .3s
+        }
+
+        button:hover {
+            opacity: .8
+        }
+
+        .add {
+            background: #2d8659;
+            color: #fff
+        }
+
+        .todo-list li {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px;
+            border-bottom: 1px solid #eee
+        }
+
+        .done {
+            text-decoration: line-through;
+            color: #888
+        }
+
+        /* Priority */
+        .high {
+            color: red;
+            font-weight: bold
+        }
+
+        .medium {
+            color: orange
+        }
+
+        .low {
+            color: green
+        }
+
+        /* FORM */
+        form {
+            max-width: 550px;
+            margin: auto;
+            background: #fff;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, .1)
+        }
+
+        input,
+        textarea,
+        select {
+            width: 100%;
+            margin: 10px 0;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 6px
+        }
+
+        .error {
+            color: red;
+            font-size: 12px;
+            display: none
+        }
+
+        .success {
+            color: green;
+            margin-top: 10px
+        }
+
+        /* Footer */
+        footer {
+            background: #1b5e3f;
+            color: #fff;
+            text-align: center;
+            padding: 25px
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <h3>Himanshu Pratap</h3>
+        <nav>
+            <a href="#todo">Todo</a>
+            <a href="#contact">Contact</a>
+        </nav>
+    </header>
+
+    <!-- TODO -->
+    <section id="todo">
+        <h2>To-Do List</h2>
+
+        <div class="todo-box">
+            <div class="todo-input">
+                <input id="task" placeholder="Add task">
+                <select id="priority">
+                    <option value="high">High</option>
+                    <option value="medium">Medium</option>
+                    <option value="low">Low</option>
+                </select>
+                <button class="add" onclick="add()">Add</button>
+            </div>
+
+            <ul id="list" class="todo-list"></ul>
+        </div>
+    </section>
+
+    <!-- CONTACT -->
+    <section id="contact">
+        <h2>Contact Form</h2>
+
+        <form onsubmit="return validate()">
+            <input id="name" placeholder="Full Name">
+            <span class="error" id="e1">Required</span>
+
+            <input id="email" placeholder="Email">
+            <span class="error" id="e2">Invalid email</span>
+
+            <input id="phone" placeholder="Phone Number">
+            <span class="error" id="e4">Invalid number</span>
+
+            <select id="subject">
+                <option value="">Select Subject</option>
+                <option>Internship</option>
+                <option>Project</option>
+                <option>Support</option>
+            </select>
+            <span class="error" id="e5">Select subject</span>
+
+            <textarea id="msg" placeholder="Message"></textarea>
+            <span class="error" id="e3">Min 10 chars</span>
+
+            <button type="submit" class="add">Send</button>
+            <div class="success" id="success"></div>
+        </form>
+    </section>
+
+    <footer>
+        © 2026 Himanshu
+    </footer>
+
+    <script>
+        let todos = JSON.parse(localStorage.getItem("todos")) || [];
+
+        /* ADD TASK */
+        function add() {
+            let t = document.getElementById("task").value.trim();
+            let p = document.getElementById("priority").value;
+
+            if (!t) return;
+
+            todos.push({ text: t, done: false, priority: p });
+            document.getElementById("task").value = "";
+            save();
+            render();
+        }
+
+        /* RENDER */
+        function render() {
+            let list = document.getElementById("list");
+
+            // sort by priority
+            let order = { high: 1, medium: 2, low: 3 };
+            todos.sort((a, b) => order[a.priority] - order[b.priority]);
+
+            list.innerHTML = todos.map((t, i) => `
+    <li class="${t.done ? 'done' : ''}">
+      <span onclick="toggle(${i})">
+        ${t.text} <span class="${t.priority}">(${t.priority})</span>
+      </span>
+      <button onclick="del(${i})">❌</button>
+    </li>
+  `).join('');
+        }
+
+        /* TOGGLE */
+        function toggle(i) {
+            todos[i].done = !todos[i].done;
+            save();
+            render();
+        }
+
+        /* DELETE */
+        function del(i) {
+            todos.splice(i, 1);
+            save();
+            render();
+        }
+
+        /* SAVE */
+        function save() {
+            localStorage.setItem("todos", JSON.stringify(todos));
+        }
+
+        /* ENTER KEY SUPPORT */
+        document.getElementById("task").addEventListener("keypress", function (e) {
+            if (e.key === "Enter") add();
+        });
+
+        /* FORM VALIDATION */
+        function validate() {
+            let ok = true;
+
+            let name = document.getElementById("name").value;
+            let email = document.getElementById("email").value;
+            let phone = document.getElementById("phone").value;
+            let msg = document.getElementById("msg").value;
+            let subject = document.getElementById("subject").value;
+
+            document.querySelectorAll(".error").forEach(e => e.style.display = "none");
+
+            if (!name) { e1.style.display = "block"; ok = false }
+            if (!/^[^ ]+@[^ ]+\.[a-z]{2,}$/.test(email)) { e2.style.display = "block"; ok = false }
+            if (!/^[0-9]{10}$/.test(phone)) { e4.style.display = "block"; ok = false }
+            if (subject === "") { e5.style.display = "block"; ok = false }
+            if (msg.length < 10) { e3.style.display = "block"; ok = false }
+
+            if (ok) {
+                document.getElementById("success").innerText = "Message sent!";
+                document.querySelector("form").reset();
+            }
+
+            return ok;
+        }
+
+        /* INIT */
+        render();
+    </script>
+
+</body>
+
+</html>
